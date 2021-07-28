@@ -1,7 +1,8 @@
-import React,{Fragment,useState} from 'react';
+import React,{useState} from 'react';
 import Header from './Component/MyLayout/Header.js';
 import Meals from './Component/Meals/Meals';
 import Cart from './Component/Cart/Cart';
+import CartProvider from './store/CartProvider';
  
 function App() {
 
@@ -21,16 +22,14 @@ function App() {
   }
 
   return (
-    <Fragment>
-      {console.log(cartPopup)};
-      {cartPopup && <Cart onClose={disableCartPopupHandler} onOrder={orderHandler}/>}
+    <CartProvider>
+        {cartPopup && <Cart onClose={disableCartPopupHandler} onOrder={orderHandler}/>}
       <Header onCartClick={enableCartPopupHandler}/> 
       <main>
-
         <Meals/>
       </main>
       
-    </Fragment>
+    </CartProvider>
     
   )  
 }
