@@ -9,17 +9,70 @@ const defaultCartState={
 
 const cartReducer=(state,action)=>{
     if (action.type==='ADD'){
-        const new_item=state.items.concat(action.item);
+        
+       
        const new_totalAmount= state.totalAmount+(action.item.price*action.item.amount);
-       console.log(action);
+       
+       const exsistingCartItemIndex=state.items.findIndex(item=>item.id===action.item.id);
+       const exsistingCartItem=state.items[exsistingCartItemIndex]
+       let updatedItem;
+       let updatedItems;
+       //Lets check if item already exists then do not but lets just update state
+       if(exsistingCartItem){
+           //below updated item will contain all details of exsisting item 
+           //along with new amount
+           updatedItem={
+               ...exsistingCartItem,
+               amount:exsistingCartItem.amount+action.item.amount
+           }
+           updatedItems=[...state.items];
+           updatedItems[exsistingCartItemIndex]=updatedItem;
+       }
+       else{
+           updatedItems=state.items.concat(action.item);
+       }
+      
        return({
-            items:new_item,
+            items:updatedItems,
             totalAmount:new_totalAmount
     })
    
     }
    if( action.type==='REMOVE'){
-
+    
+   
+    
+       const exsistingCartItemIndex=state.items.findIndex(item=>item.id===action.item.id);
+       const exsistingCartItem=state.items[exsistingCartItemIndex]
+       let updatedItem;
+       let updatedItems;
+        let new_totalAmount_reduce=0;
+       //Lets check if item already exists then do not but lets just update state
+       if(exsistingCartItem){
+           //below updated item will contain all details of exsisting item 
+           //along with new amount
+           updatedItem={
+               ...exsistingCartItem,
+               amount:exsistingCartItem.amount-action.item.amount
+           }
+           updatedItems=[...state.items];
+          
+           updatedItems[exsistingCartItemIndex]=updatedItem;
+           new_totalAmount_reduce= state.totalAmount-(action.item.price*action.item.amount);
+           
+           if(exsistingCartItem.amount===1){
+            updatedItems[exsistingCartItemIndex]=updatedItem;
+            new_totalAmount_reduce= state.totalAmount-(action.item.price*action.item.amount);
+            updatedItems=state.items.filter(item=>item.id!==action.item.id) 
+        }
+           
+       }
+    
+    
+       return({
+            items:updatedItems,
+            totalAmount:new_totalAmount_reduce
+    })
    } 
      return defaultCartState;
 };
